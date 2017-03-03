@@ -45,11 +45,6 @@ public class Restaurant {
     private final DecimalFormat df = new DecimalFormat("##.00");
     private String[] lastOrdered;
 
-//    private Thread waiter;
-//
-//    private Thread cook;
-//
-//    private Thread server;
 
     /**
      * Helper method for output formatting.
@@ -66,12 +61,6 @@ public class Restaurant {
      * @param name
      */
     public Restaurant(String name) {
-//        this.waiter = new Thread(new Waiter(this));
-//
-//        this.server = new Thread(new Server(this));
-//
-//        this.cook = new Thread(new Cook(this));
-
         this.name = name;
         orderCount = 0;
         orderQueue = new Queue<Order>();
@@ -211,23 +200,12 @@ public class Restaurant {
     }
 
     void procesOrders() throws InterruptedException {
-//        if (cook.isAlive()) {
-//            cook.run();
-//        } else {
-//            cook.start();
-//        }
         Thread cook = new Thread(new Waiter(this));
         cook.start();
         cook.join();
     }
 
     void submitOrder(String... ordered) throws RestaurantException, InterruptedException {
-//        this.lastOrdered = ordered;
-//        if (!waiter.isAlive()) {
-//            waiter.start();
-//        } else {
-//            waiter.run();
-//        }
         this.setLastOrdered(ordered);
         Thread waiter = new Thread(new Waiter(this));
         waiter.start();
@@ -235,11 +213,6 @@ public class Restaurant {
     }
 
     void getNextMeal() throws InterruptedException {
-//        if (!server.isAlive()) {
-//            server.start();
-//        } else {
-//            server.run();
-//        }
         Thread server = new Thread(new Server(this));
         server.start();
         server.join();
