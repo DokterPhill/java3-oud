@@ -15,7 +15,7 @@ public class Main {
         System.out.println("Restaurant has opened!!");
         Restaurant.printSeparator();
         try {
-            china.submitOrder("11, 7", "13, 4"); //change to server
+            china.submitOrder("11, 7", "13, 4"); 
         } catch (RestaurantException e) {
             System.out.println(e.getMessage());
         }
@@ -27,12 +27,12 @@ public class Main {
         }
         china.procesOrders();
         try {
-            china.submitOrder("45, 1 ", " 47, 2 ", " 10, 2"); //change to server
+            china.submitOrder("45, 1 ", " 47, 2 ", " 10, 2");
         } catch (RestaurantException e) {
             System.out.println(e.getMessage());
         }
         try {
-            china.submitOrder("10, 2 ", " 33, 2 ", " 19, 2"); //change to server
+            china.submitOrder("10, 2 ", " 33, 2 ", " 19, 2"); 
         } catch (RestaurantException e) {
             System.out.println(e.getMessage());
         }
@@ -41,7 +41,6 @@ public class Main {
         System.out.println("Getting all the meals");
         Restaurant.printSeparator();
         while (china.hasMeals()) {
-            //System.out.println(china.getNextMeal()); //change to server
         china.getNextMeal();
         }
         Restaurant.printSeparator();

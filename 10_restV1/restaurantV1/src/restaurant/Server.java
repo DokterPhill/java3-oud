@@ -17,29 +17,11 @@ public class Server implements Runnable {
         this.restaurant = restaurant;
     }
     
-    
-    
-//    /**
-//     * Get the next meal to serve.
-//     * @return information of the next meal belonging to a certain order
-//     */
-//    public void getNextMeal() {
-//        try {
-//            Thread.sleep(150);
-//        } catch (InterruptedException e) {
-//            // TODO Auto-generated catch block
-//            e.printStackTrace();
-//        }
-//        Meal meal = restaurant.getMealsReadyQueue().get();
-//        System.out.println( meal.toString());
-//    }
-
     @Override
     public void run() {
         try {
             Thread.sleep(150);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         Meal meal = restaurant.getMealsReadyQueue().get();

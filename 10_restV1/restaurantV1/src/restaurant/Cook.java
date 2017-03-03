@@ -16,28 +16,7 @@ public class Cook implements Runnable {
     public Cook(Restaurant restaurant) {
         this.restaurant = restaurant;
     }
-    
-    
-//    
-//         /**
-//     * Process the orders in FIFO order.
-//     */
-//    public void procesOrders() {
-//        while (!restaurant.getOrderQueue().empty()) {
-//            Order order = restaurant.getOrderQueue().get();
-//            int orderNR = order.getNumber();
-//            for ( OrderLine ol : order){ //while (order.hasOrderLines()) {
-//                //OrderLine ol = order.getOrderLine();
-//                int mealNR = ol.getMealNR();
-//                int persons = ol.getPersons();
-//                for (int p = 0; p < persons; p++) {
-//                    restaurant.getMealsReadyQueue().put(prepareMeal(orderNR, mealNR));
-//                }
-//            }
-//        }
-//    }
-    
-    
+  
      /**
      * Prepares a meal according to recipe (preparation time).
      * @param orderNR
@@ -51,7 +30,6 @@ public class Cook implements Runnable {
         try {
             Thread.sleep(procTime);
         } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return new Meal(orderNR, mealNR, mealName);
@@ -62,8 +40,7 @@ public class Cook implements Runnable {
             while (!restaurant.getOrderQueue().empty()) {
             Order order = restaurant.getOrderQueue().get();
             int orderNR = order.getNumber();
-            for ( OrderLine ol : order){ //while (order.hasOrderLines()) {
-                //OrderLine ol = order.getOrderLine();
+            for ( OrderLine ol : order){
                 int mealNR = ol.getMealNR();
                 int persons = ol.getPersons();
                 for (int p = 0; p < persons; p++) {
