@@ -45,12 +45,14 @@ class Queue<T> {
      * @param item to put.
      */
     void put(T item) {
+        synchronized(this){
         Node<T> t = tail;
         tail = new Node<T>(item);
         if (empty()) {
             head = tail;
         } else {
             t.next = tail;
+        }
         }
     }
 
@@ -60,9 +62,11 @@ class Queue<T> {
      * @return the head element.
      */
     T get() {
+        {
         T v = head.item;
         Node<T> t = head.next;
         head = t;
         return v;
+        }
     }
 }
