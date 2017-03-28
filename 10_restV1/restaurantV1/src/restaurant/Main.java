@@ -26,6 +26,7 @@ public class Main {
             System.out.println(e.getMessage());
         }
         china.procesOrders();
+       
         try {
             china.submitOrder("45, 1 ", " 47, 2 ", " 10, 2");
         } catch (RestaurantException e) {

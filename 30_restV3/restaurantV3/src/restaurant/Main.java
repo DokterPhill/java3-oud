@@ -14,14 +14,14 @@ public class Main {
         
         Restaurant.printSeparator();
         Restaurant china = new Restaurant("Mei Ling");
-        System.out.println(china.isOrdersEmpty());
         china.printMenu();
         Restaurant.printSeparator();
         System.out.println("Restaurant has opened!!");
         Restaurant.printSeparator();
-
         System.out.println("");
         System.out.println("Getting all the meals");
+        
+        china.startExecutor();
         try {
             china.submitOrder("11, 7", "11, 4"); 
         } catch (RestaurantException e) {
@@ -45,6 +45,7 @@ public class Main {
             System.out.println(e.getMessage());
         }
         try {
+            Thread.sleep(10000);
             china.submitOrder("Restaurant Closed");
         } catch (RestaurantException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

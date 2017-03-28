@@ -23,7 +23,7 @@ public class Cook implements Runnable {
      * @param mealNR
      * @return the prepared meal.
      */
-    private Meal prepareMeal(int orderNR, int mealNR) {
+    private void prepareMeal(int orderNR, int mealNR) {
         Recipe recipe = restaurant.getRecipes().get(mealNR);
         String mealName = recipe.getName();
         int procTime = recipe.getPreparationTime();
@@ -32,19 +32,23 @@ public class Cook implements Runnable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return new Meal(orderNR, mealNR, mealName);
+         restaurant.getMealsReadyQueue().put(new Meal(orderNR, mealNR, mealName));
+         
     }
 
     @Override
     public void run() {
+        
             while (!restaurant.getOrderQueue().empty()) {
             Order order = restaurant.getOrderQueue().get();
             int orderNR = order.getNumber();
             for ( OrderLine ol : order){
+                
                 int mealNR = ol.getMealNR();
                 int persons = ol.getPersons();
                 for (int p = 0; p < persons; p++) {
-                    restaurant.getMealsReadyQueue().put(prepareMeal(orderNR, mealNR));
+                    prepareMeal(orderNR, mealNR);
+                    
                 }
             }
         } 

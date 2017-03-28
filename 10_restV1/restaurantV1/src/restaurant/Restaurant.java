@@ -200,7 +200,8 @@ public class Restaurant {
     }
 
     void procesOrders() throws InterruptedException {
-        Thread cook = new Thread(new Waiter(this));
+        
+        Thread cook = new Thread(new Cook(this));
         cook.start();
         cook.join();
     }
