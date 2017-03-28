@@ -23,12 +23,14 @@ public class ProcessThread implements Runnable {
 
     public Order WaiterTask() {
         String ordered = restaurant.getOrders();
+        System.out.println(ordered);
         int orderCount = restaurant.incrementOrderCount();
         Order order = new Order(orderCount);
-
-            if (ordered.contentEquals("Restaurant Closed")){
-                restaurant.setRun();
-            } else {
+        
+        
+        if (ordered.equals("empty1")) {
+            return new Order(0);
+        } else {
             String[] lineParts = ordered.split("\\s*,\\s*", 2);
             int mealNR = 0;
             int servings = 0;
@@ -39,7 +41,7 @@ public class ProcessThread implements Runnable {
                 try {
                     throw new RestaurantException(nfe);
                 } catch (RestaurantException ex) {
-                    //Logger.getLogger(Waiter.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ProcessThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
             if (!restaurant.getRecipes().containsKey(mealNR)) {
@@ -51,17 +53,16 @@ public class ProcessThread implements Runnable {
                         + ", ordered: menu nr. " + mealNR + " ,"
                         + servings + " servings.");
             }
-            }
-        
-        //restaurant.getOrderQueue().put(order);
+
+            //restaurant.getOrderQueue().put(order);
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
-        restaurant.setOrderCount(orderCount);
-        return order;
+            restaurant.setOrderCount(orderCount);
+            return order;
+        }
     }
 
     private ArrayList<Meal> CookTask(Order order) {
@@ -100,16 +101,19 @@ public class ProcessThread implements Runnable {
 
     @Override
     public void run() {
+        
         Order order = this.WaiterTask();
-        Restaurant.printSeparator();
-        ArrayList<Meal> meals = this.CookTask(order);
-        for (Meal meal : meals) {
-            try {
-                this.ServerTask(meal);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ProcessThread.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        if (order.getNumber() == 0) {
+            restaurant.stopExecutor();
+        } else {
+            ArrayList<Meal> meals = this.CookTask(order);
+            meals.forEach((meal) -> {
+                try {
+                    this.ServerTask(meal);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ProcessThread.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
         }
     }
-
 }

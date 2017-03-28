@@ -4,11 +4,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
+//import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
  * Naive restaurant for concurrency lab.
@@ -40,8 +39,8 @@ public class Restaurant {
      */
     private final DecimalFormat df = new DecimalFormat("##.00");
     private Queue<String> orders1;
-    private final Executor exec = Executors.newFixedThreadPool(3);
-    private Boolean run = true;
+    Thread execThread;
+
     /**
      * Helper method for output formatting.
      */
@@ -55,16 +54,17 @@ public class Restaurant {
      * Construct a named restaurant.
      *
      * @param name
+     * @throws java.lang.InterruptedException
      */
-    public Restaurant(String name) {
+    public Restaurant(String name) throws InterruptedException {
+        this.execThread = new Thread(new ExecuteRestaurant(this));
         this.name = name;
-        orderCount = 0;
-        //mealsReadyQueue = new Queue<Meal>();
+        orderCount = 1;
         recipes = new HashMap<Integer, Recipe>();
         menu = new ArrayList<String>();
-        
+        orders1 = new Queue();
         importMeals();
-        //this.execute();
+
     }
 
     /**
@@ -116,7 +116,7 @@ public class Restaurant {
     public void setMenu(ArrayList<String> menu) {
         this.menu = menu;
     }
-    
+
     /**
      * Print the menu of the restaurant. Each meal has a number and this number
      * should be used to order a meal.
@@ -129,8 +129,8 @@ public class Restaurant {
             System.out.println(line);
         }
     }
-    
-        public int incrementOrderCount() {
+
+    public int incrementOrderCount() {
         int count;
         synchronized (this) {
             count = this.orderCount;
@@ -148,40 +148,39 @@ public class Restaurant {
     public String toString() {
         return "Restaurant " + name;
     }
-    
-    public void setRun(){
-        this.run = false;
+
+    public Boolean isOrdersEmpty() {
+        return orders1.empty();
+
     }
-    
-    public Boolean isOrdersEmpty(){
-        System.out.println(orders1.peek());
-        return orders1.peek()==null;
+
+    public void stopExecutor() {
+
     }
-    
-    private void execute(){
-        //while(run==true){
-            if (! isOrdersEmpty()){
-                System.out.println("empty!");
-            } else {
-                //System.out.println(this);
-                exec.execute(new ProcessThread(this));
-            }
+
+    public String getOrders() {
+        return this.orders1.get();
+
     }
-    
-    public String getOrders(){
-        return this.orders1.poll();
+
+    public void addOrders(String order) {
+        System.out.println(order);
+        orders1.put(order);
+
     }
-    
-    public void addOrders(String order){
-        orders1.add(order);
+
+    public void startExecutor() {
+        execThread.start();
     }
-    
-    
+
     public void submitOrder(String... ordered) throws RestaurantException, InterruptedException {
-        System.out.println(isOrdersEmpty());
-//        for (String string1 : ordered) {
-//            addOrders(string1);
-//        }
+        for (String string1 : ordered) {
+            if (ordered.equals("Restaurant Closed")) {
+            } else {
+                addOrders(string1);
+                System.out.println(string1);
+            }
+        }
     }
 
 }
