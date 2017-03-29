@@ -73,7 +73,8 @@ class Queue<T> {
     T get() {
        {
             if (empty()) {
-                this.put((T) "empty1");
+                String[] empty = {"empty1"};
+                this.put((T) empty);
                 return head.item;
             } else {
                 T v = head.item;

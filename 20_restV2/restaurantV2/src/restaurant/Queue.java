@@ -37,7 +37,9 @@ class Queue<T> {
      * @return true if queue contains no elements.
      */
     boolean empty() {
+        synchronized(this){
         return (head == null);
+    }
     }
 
     /**
