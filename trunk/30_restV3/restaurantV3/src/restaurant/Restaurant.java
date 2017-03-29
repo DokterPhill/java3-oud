@@ -38,7 +38,7 @@ public class Restaurant {
      * Format for our price list and bills
      */
     private final DecimalFormat df = new DecimalFormat("##.00");
-    private Queue<String> orders1;
+    private Queue<String[]> orders1;
     Thread execThread;
 
     /**
@@ -135,10 +135,23 @@ public class Restaurant {
         synchronized (this) {
             count = this.orderCount;
             this.orderCount++;
+            System.out.println(orderCount);
+            System.out.println(count);
         }
         return count;
     }
 
+        public int decrementOrderCount() {
+        int count;
+        synchronized (this) {
+            count = this.orderCount;
+            this.orderCount--;
+            System.out.println(orderCount);
+            System.out.println(count);
+        }
+        return count;
+    }
+    
     /**
      * String representation of the restaurant.
      *
@@ -158,13 +171,12 @@ public class Restaurant {
 
     }
 
-    public String getOrders() {
+    public String[] getOrders() {
         return this.orders1.get();
 
     }
 
-    public void addOrders(String order) {
-        System.out.println(order);
+    public void addOrders(String[] order) {
         orders1.put(order);
 
     }
@@ -173,14 +185,10 @@ public class Restaurant {
         execThread.start();
     }
 
+    
+    
     public void submitOrder(String... ordered) throws RestaurantException, InterruptedException {
-        for (String string1 : ordered) {
-            if (ordered.equals("Restaurant Closed")) {
-            } else {
-                addOrders(string1);
-                System.out.println(string1);
-            }
-        }
+        orders1.put(ordered);
     }
 
 }

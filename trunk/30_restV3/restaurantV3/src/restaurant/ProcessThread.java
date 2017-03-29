@@ -22,47 +22,50 @@ public class ProcessThread implements Runnable {
     }
 
     public Order WaiterTask() {
-        String ordered = restaurant.getOrders();
-        System.out.println(ordered);
+        String[] ordered = restaurant.getOrders();
         int orderCount = restaurant.incrementOrderCount();
         Order order = new Order(orderCount);
-        
-        
-        if (ordered.equals("empty1")) {
-            return new Order(0);
-        } else {
-            String[] lineParts = ordered.split("\\s*,\\s*", 2);
-            int mealNR = 0;
-            int servings = 0;
-            try {
-                mealNR = Integer.parseInt(lineParts[0].trim());
-                servings = Integer.parseInt(lineParts[1].trim());
-            } catch (NumberFormatException nfe) {
+        for (String orders : ordered) {
+            System.out.println("orders = " + orders + " orderNr = "+orderCount);
+            if (orders.equals("Restaurant Closed")) {
+                restaurant.decrementOrderCount();
+                return new Order(0);
+            } else {
+                if (orders.equals("empty1")) {
+                    restaurant.decrementOrderCount();
+                } else { 
+                
+                String[] lineParts = orders.split("\\s*,\\s*", 2);
+                int mealNR = 0;
+                int servings = 0;
                 try {
-                    throw new RestaurantException(nfe);
-                } catch (RestaurantException ex) {
-                    Logger.getLogger(ProcessThread.class.getName()).log(Level.SEVERE, null, ex);
+                    mealNR = Integer.parseInt(lineParts[0].trim());
+                    servings = Integer.parseInt(lineParts[1].trim());
+                } catch (NumberFormatException nfe) {
+                    try {
+                        throw new RestaurantException(nfe);
+                    } catch (RestaurantException ex) {
+                        Logger.getLogger(ProcessThread.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                if (!restaurant.getRecipes().containsKey(mealNR)) {
+                    System.out.println("Order nr. " + orderCount
+                            + ": a non existing meal (nr.=" + mealNR + ") ordered!");
+                } else {
+                    order.addMeal(mealNR, servings);
+                    System.out.println("Order nr. " + orderCount
+                            + ", ordered: menu nr. " + mealNR + " ,"
+                            + servings + " servings.");
                 }
             }
-            if (!restaurant.getRecipes().containsKey(mealNR)) {
-                System.out.println("Order nr. " + orderCount
-                        + ": a non existing meal (nr.=" + mealNR + ") ordered!");
-            } else {
-                order.addMeal(mealNR, servings);
-                System.out.println("Order nr. " + orderCount
-                        + ", ordered: menu nr. " + mealNR + " ,"
-                        + servings + " servings.");
             }
-
-            //restaurant.getOrderQueue().put(order);
+        }
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-            restaurant.setOrderCount(orderCount);
-            return order;
-        }
+        return order;
     }
 
     private ArrayList<Meal> CookTask(Order order) {
@@ -101,7 +104,7 @@ public class ProcessThread implements Runnable {
 
     @Override
     public void run() {
-        
+
         Order order = this.WaiterTask();
         if (order.getNumber() == 0) {
             restaurant.stopExecutor();
