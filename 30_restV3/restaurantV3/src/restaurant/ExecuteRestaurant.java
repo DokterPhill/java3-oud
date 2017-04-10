@@ -5,6 +5,9 @@
  */
 package restaurant;
 
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -33,6 +36,17 @@ public class ExecuteRestaurant implements Runnable {
         Thread.sleep(6000);
     }
 
+    private void ServerTask(ArrayList<Meal> meals) throws InterruptedException {
+        for (Meal meal : meals) {
+        try {
+            Thread.sleep(150);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(meal.toString());
+        }
+    }
+
     @Override
     public void run() {
 
@@ -46,7 +60,12 @@ public class ExecuteRestaurant implements Runnable {
                         bool = true;
                     }
                     if (!bool) {
-                        exec.execute(new ProcessThread(restaurant));
+                        CompletableFuture future = (CompletableFuture) exec.submit(new ProcessThread(restaurant));
+                        try {
+                            ServerTask((ArrayList<Meal>) future.get());
+                        } catch (InterruptedException | ExecutionException ex) {
+                            Logger.getLogger(ExecuteRestaurant.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
 

@@ -6,6 +6,8 @@
 package restaurant;
 
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,10 +15,11 @@ import java.util.logging.Logger;
  *
  * @author Jazz
  */
-public class ProcessThread implements Runnable {
+public class ProcessThread implements Callable {
 
     Restaurant restaurant;
-
+    CompletableFuture<ArrayList<Meal>> future = new CompletableFuture<>();
+    
     public ProcessThread(Restaurant restaurant) {
         this.restaurant = restaurant;
     }
@@ -77,8 +80,7 @@ public class ProcessThread implements Runnable {
             for (int p = 0; p < persons; p++) {
                 meals.add(prepareMeal(orderNR, mealNR));
             }
-        }
-        return meals;
+        } return meals;
     }
 
     private Meal prepareMeal(int orderNR, int mealNR) {
@@ -92,31 +94,16 @@ public class ProcessThread implements Runnable {
         }
         return new Meal(orderNR, mealNR, mealName);
     }
-
-    private void ServerTask(Meal meal) throws InterruptedException {
-        try {
-            Thread.sleep(150);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println(meal.toString());
-    }
-
+    
     @Override
-    public void run() {
-
+    public ArrayList<Meal> call() throws Exception {
         Order order = this.WaiterTask();
         if (order.getNumber() == 0) {
             restaurant.stopExecutor();
+            return null;
         } else {
             ArrayList<Meal> meals = this.CookTask(order);
-            meals.forEach((meal) -> {
-                try {
-                    this.ServerTask(meal);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ProcessThread.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
+             return meals;
         }
     }
 }
