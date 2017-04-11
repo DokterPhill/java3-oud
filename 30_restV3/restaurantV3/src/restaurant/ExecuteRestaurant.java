@@ -10,7 +10,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,6 +54,7 @@ public class ExecuteRestaurant implements Runnable {
             if (restaurant.isOrdersEmpty()) {
             } else {
                 String[] orders = restaurant.getOrders();
+                ArrayList<CompletableFuture> futures= new ArrayList<>();
                 Boolean bool = false;
                 for (String ordered : orders) {
                     if (ordered.contains("empty1")) {
@@ -64,11 +64,22 @@ public class ExecuteRestaurant implements Runnable {
                         CompletableFuture<ArrayList<Meal>> future;
                         try {
                             future = (CompletableFuture<ArrayList<Meal>>) exec.submit(new ProcessThread(restaurant)).get();
-                            ServerTask((ArrayList<Meal>) future.get());
+                            futures.add(future);
+                        
                         } catch (InterruptedException | ExecutionException ex) {
                             Logger.getLogger(ExecuteRestaurant.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+                }
+                for (CompletableFuture future : futures) {
+                    try {
+                        this.ServerTask((ArrayList<Meal>) future.get());
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ExecuteRestaurant.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ExecutionException ex) {
+                        Logger.getLogger(ExecuteRestaurant.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    
                 }
 
             }
