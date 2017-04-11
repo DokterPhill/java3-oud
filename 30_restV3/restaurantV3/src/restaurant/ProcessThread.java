@@ -68,6 +68,7 @@ public class ProcessThread implements Callable {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        this.CookTask(order);
         return order;
     }
 
@@ -96,14 +97,13 @@ public class ProcessThread implements Callable {
     }
     
     @Override
-    public ArrayList<Meal> call() throws Exception {
+    public CompletableFuture<ArrayList<Meal>> call() throws Exception {
         Order order = this.WaiterTask();
         if (order.getNumber() == 0) {
             restaurant.stopExecutor();
             return null;
         } else {
-            ArrayList<Meal> meals = this.CookTask(order);
-             return meals;
+             return future;
         }
     }
 }

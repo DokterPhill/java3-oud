@@ -10,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,8 +61,9 @@ public class ExecuteRestaurant implements Runnable {
                         bool = true;
                     }
                     if (!bool) {
-                        CompletableFuture future = (CompletableFuture) exec.submit(new ProcessThread(restaurant));
+                        CompletableFuture<ArrayList<Meal>> future;
                         try {
+                            future = (CompletableFuture<ArrayList<Meal>>) exec.submit(new ProcessThread(restaurant)).get();
                             ServerTask((ArrayList<Meal>) future.get());
                         } catch (InterruptedException | ExecutionException ex) {
                             Logger.getLogger(ExecuteRestaurant.class.getName()).log(Level.SEVERE, null, ex);
